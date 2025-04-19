@@ -4,7 +4,7 @@ export * from './adapters/base.adapter.js';
 export * from './adapters/secrets-json-file.adapter.js';
 export * from './adapters/static-secrets.adapter.js';
 export * from './public-mocks/mock-aws-secrets-manager.js';
-export * from './public-mocks/mock-read-file.js';
+export * from './public-mocks/mock-fs.js';
 export * from './secret-load.error.js';
 export * from './secrets-definition/define-secrets.js';
 export * from './updating-secrets.js';

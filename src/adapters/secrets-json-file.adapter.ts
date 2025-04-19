@@ -1,6 +1,53 @@
-import {parseWithJson5} from '@augment-vir/common';
-import {readFile as readFileImport} from 'node:fs/promises';
+import {
+    mergeDefinedProperties,
+    parseWithJson5,
+    type MaybePromise,
+    type PartialWithUndefined,
+} from '@augment-vir/common';
+import {existsSync as existsSyncImport} from 'node:fs';
+import {readFile as readFileImport, writeFile as writeFileImport} from 'node:fs/promises';
+import type {SecretDefinitions, SecretValues} from '../secrets-definition/define-secrets.js';
 import {BaseSecretsAdapter} from './base.adapter.js';
+
+/**
+ * Options for {@link SecretsJsonFileAdapter}.
+ *
+ * @category Internal
+ */
+export type SecretsJsonFileAdapterOptions<Secrets extends SecretDefinitions = any> = {
+    /**
+     * Optional override for Node.js's `fs` for mocking, testing, or other purposes.
+     *
+     * @default import * as fs from 'node:fs';
+     */
+    fsOverride: {
+        /** `'node:fs/promises'` */
+        promises: {
+            /** `readFile` from `'node:fs/promises'` */
+            readFile: (filePath: string) => Promise<string | Buffer>;
+            /** `writeFile` from `'node:fs/promises'` */
+            writeFile: (filePath: string, contents: string | Buffer) => Promise<void>;
+        };
+        /** `existsSync` from `'node:fs'` */
+        existsSync: (filePath: string) => boolean;
+    };
+    /**
+     * Optional function that will automatically generate and save new secrets if the JSON file is
+     * missing. This is particularly useful for dev or testing environments.
+     */
+    generateValues: (() => MaybePromise<SecretValues<Secrets>>) | undefined;
+};
+
+const defaultSecretsJsonFileAdapterOptions: SecretsJsonFileAdapterOptions = {
+    fsOverride: {
+        existsSync: existsSyncImport,
+        promises: {
+            readFile: readFileImport,
+            writeFile: writeFileImport,
+        },
+    },
+    generateValues: undefined,
+};
 
 /**
  * Loads all secrets from a single JSON file. This should rarely be used in production environments.
@@ -12,21 +59,38 @@ import {BaseSecretsAdapter} from './base.adapter.js';
  *
  * @category Adapters
  */
-export class SecretsJsonFileAdapter extends BaseSecretsAdapter {
+export class SecretsJsonFileAdapter<
+    const Secrets extends SecretDefinitions = any,
+> extends BaseSecretsAdapter {
+    protected readonly options: SecretsJsonFileAdapterOptions;
+
     constructor(
         /** Path to the JSON */
         protected readonly jsonFilePath: string,
-        /** Optional override for `fs.promises.readFile` for mocking, testing, or other purposes. */
-        protected readonly readFileOverride: (
-            filePath: string,
-        ) => Promise<string | Buffer> = readFileImport,
+        options: PartialWithUndefined<SecretsJsonFileAdapterOptions<Secrets>> = {},
     ) {
         super('SecretsJsonFileAdapter');
+
+        this.options = mergeDefinedProperties(defaultSecretsJsonFileAdapterOptions, options);
     }
 
     /** Loads secrets from the given JSON file path. */
     public override async loadSecrets() {
-        const fileContents = String(await this.readFileOverride(this.jsonFilePath));
+        if (!this.options.fsOverride.existsSync(this.jsonFilePath)) {
+            if (this.options.generateValues) {
+                const newSecrets = await this.options.generateValues();
+                await this.options.fsOverride.promises.writeFile(
+                    this.jsonFilePath,
+                    JSON.stringify(newSecrets),
+                );
+            } else {
+                throw new Error(`Missing secrets JSON file at '${this.jsonFilePath}'`);
+            }
+        }
+
+        const fileContents = String(
+            await this.options.fsOverride.promises.readFile(this.jsonFilePath),
+        );
 
         return parseWithJson5(fileContents);
     }
