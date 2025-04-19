@@ -1,6 +1,6 @@
 {
     "name": "updating-secrets",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "Automatically update secrets on an interval with support for seamless secret rotation.",
     "keywords": [
         "secrets",

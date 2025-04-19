@@ -35,6 +35,9 @@ export function createMockFs(
 
     return {
         promises: {
+            mkdir() {
+                return Promise.resolve();
+            },
             readFile(filePath) {
                 if ('contents' in mockFiles) {
                     return Promise.resolve(mockFiles.contents);

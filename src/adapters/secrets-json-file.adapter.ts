@@ -5,7 +5,12 @@ import {
     type PartialWithUndefined,
 } from '@augment-vir/common';
 import {existsSync as existsSyncImport} from 'node:fs';
-import {readFile as readFileImport, writeFile as writeFileImport} from 'node:fs/promises';
+import {
+    mkdir as mkDirImport,
+    readFile as readFileImport,
+    writeFile as writeFileImport,
+} from 'node:fs/promises';
+import {dirname} from 'node:path';
 import type {SecretDefinitions, SecretValues} from '../secrets-definition/define-secrets.js';
 import {BaseSecretsAdapter} from './base.adapter.js';
 
@@ -27,6 +32,8 @@ export type SecretsJsonFileAdapterOptions<Secrets extends SecretDefinitions = an
             readFile: (filePath: string) => Promise<string | Buffer>;
             /** `writeFile` from `'node:fs/promises'` */
             writeFile: (filePath: string, contents: string | Buffer) => Promise<void>;
+            /** `mkdir` from `'node:fs/promises'` */
+            mkdir: (filePath: string, options?: {recursive: boolean}) => Promise<void | string>;
         };
         /** `existsSync` from `'node:fs'` */
         existsSync: (filePath: string) => boolean;
@@ -44,6 +51,7 @@ const defaultSecretsJsonFileAdapterOptions: SecretsJsonFileAdapterOptions = {
         promises: {
             readFile: readFileImport,
             writeFile: writeFileImport,
+            mkdir: mkDirImport,
         },
     },
     generateValues: undefined,
@@ -79,6 +87,9 @@ export class SecretsJsonFileAdapter<
         if (!this.options.fsOverride.existsSync(this.jsonFilePath)) {
             if (this.options.generateValues) {
                 const newSecrets = await this.options.generateValues();
+                await this.options.fsOverride.promises.mkdir(dirname(this.jsonFilePath), {
+                    recursive: true,
+                });
                 await this.options.fsOverride.promises.writeFile(
                     this.jsonFilePath,
                     JSON.stringify(newSecrets),
