@@ -2,6 +2,8 @@
 
 Automatically update secrets on an interval with support for seamless secret rotation.
 
+Reference docs: https://electrovir.github.io/updating-secrets
+
 ## Install
 
 ```sh
