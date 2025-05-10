@@ -8,10 +8,10 @@ import {
     type AnyObject,
 } from '@augment-vir/common';
 import {
-    GetSecretValueCommandOutput,
     type GetSecretValueCommand,
+    type GetSecretValueCommandOutput,
 } from '@aws-sdk/client-secrets-manager';
-import {ProcessedSecretDefinitions} from '../secrets-definition/define-secrets.js';
+import {type ProcessedSecretDefinitions} from '../secrets-definition/define-secrets.js';
 import {BaseSecretsAdapter} from './base.adapter.js';
 
 /**

@@ -1,6 +1,6 @@
-import type {MaybePromise} from '@augment-vir/common';
-import type {RequireExactlyOne} from 'type-fest';
-import {SecretsJsonFileAdapterOptions} from '../adapters/secrets-json-file.adapter.js';
+import {type MaybePromise} from '@augment-vir/common';
+import {type RequireExactlyOne} from 'type-fest';
+import {type SecretsJsonFileAdapterOptions} from '../adapters/secrets-json-file.adapter.js';
 
 /**
  * Mock data for {@link createMockFs}. There are two possible options contained herein, but only one

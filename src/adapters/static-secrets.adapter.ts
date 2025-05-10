@@ -1,4 +1,4 @@
-import type {JsonCompatibleValue} from '@augment-vir/common';
+import {type JsonCompatibleValue} from '@augment-vir/common';
 import {BaseSecretsAdapter} from './base.adapter.js';
 
 /**

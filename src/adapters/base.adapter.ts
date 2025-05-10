@@ -1,5 +1,5 @@
-import type {JsonCompatibleValue, MaybePromise} from '@augment-vir/common';
-import {ProcessedSecretDefinitions} from '../secrets-definition/define-secrets.js';
+import {type JsonCompatibleValue, type MaybePromise} from '@augment-vir/common';
+import {type ProcessedSecretDefinitions} from '../secrets-definition/define-secrets.js';
 
 /**
  * Raw secret values as returned by an adapter's `loadSecrets` method.

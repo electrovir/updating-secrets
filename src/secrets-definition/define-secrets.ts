@@ -1,6 +1,6 @@
 import {type PartialWithUndefined, type Values} from '@augment-vir/common';
 import {defineShape, optional, type ShapeDefinition} from 'object-shape-tester';
-import type {RequireExactlyOne} from 'type-fest';
+import {type Exact, type RequireExactlyOne} from 'type-fest';
 
 /**
  * The shape definition for built-in handling of secret rotation. Use this shape in a secret
@@ -71,6 +71,22 @@ export type SecretDefinitions = {
         whereToFind: string;
 
         adapterConfig?: PartialWithUndefined<{
+            infisical: {
+                projectId: string;
+                folderPath?: string;
+            } & RequireExactlyOne<{
+                /**
+                 * The name of the secret key within the given folder path. Use this when this
+                 * secret definition corresponds exactly to a single secret entry in Infisical.
+                 */
+                keyInFolder: string;
+                /**
+                 * Set this to `true` to use the entire folder's contents as this secret's value.
+                 * The folder will be loaded recursively, meaning all folders within this folder
+                 * will also be loaded.
+                 */
+                useWholeFolder: true;
+            }>;
             /**
              * Configuration for loading this secret from AWS. This is required if you're using the
              * AWS SecretsManager adapter, otherwise the secret will fail to load.
@@ -120,7 +136,11 @@ export type SecretDefinitions = {
  *
  * @category Define Secrets
  */
-export function defineSecrets<const Secrets extends SecretDefinitions>(secrets: Secrets): Secrets {
+export function defineSecrets<
+    const Secrets extends {
+        [Key in keyof Secrets]: Exact<Values<SecretDefinitions>, Secrets[Key]>;
+    } & SecretDefinitions,
+>(secrets: Secrets): Secrets {
     return secrets;
 }
 

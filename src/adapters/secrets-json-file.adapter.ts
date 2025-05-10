@@ -11,7 +11,7 @@ import {
     writeFile as writeFileImport,
 } from 'node:fs/promises';
 import {dirname} from 'node:path';
-import type {SecretDefinitions, SecretValues} from '../secrets-definition/define-secrets.js';
+import {type SecretDefinitions, type SecretValues} from '../secrets-definition/define-secrets.js';
 import {BaseSecretsAdapter} from './base.adapter.js';
 
 /**
