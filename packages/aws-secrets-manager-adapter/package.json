@@ -1,0 +1,51 @@
+{
+    "name": "@updating-secrets/aws-secrets-manager-adapter",
+    "version": "1.0.0",
+    "description": "AWS Secrets Manager adapter for the updating-secrets package.",
+    "keywords": [
+        "secrets",
+        "rotation",
+        "interval",
+        "update",
+        "aws",
+        "secrets manager",
+        "adapter"
+    ],
+    "homepage": "https://github.com/electrovir/updating-secrets",
+    "bugs": {
+        "url": "https://github.com/electrovir/updating-secrets/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/electrovir/updating-secrets.git"
+    },
+    "license": "(MIT or CC0 1.0)",
+    "author": {
+        "name": "electrovir",
+        "url": "https://github.com/electrovir"
+    },
+    "sideEffects": false,
+    "type": "module",
+    "main": "src/index.ts",
+    "module": "src/index.ts",
+    "types": "src/index.ts",
+    "scripts": {
+        "compile": "virmator compile",
+        "docs": "virmator docs",
+        "start": "tsx src/index.ts",
+        "test": "virmator test node",
+        "test:coverage": "npm run test coverage",
+        "test:docs": "virmator docs check",
+        "test:update": "npm test update"
+    },
+    "dependencies": {
+        "@aws-sdk/client-secrets-manager": "^3.840.0",
+        "updating-secrets": "^1.0.0"
+    },
+    "engines": {
+        "node": ">=22"
+    },
+    "publishConfig": {
+        "access": "public"
+    }
+}

@@ -1,6 +1,6 @@
 import {stringifyWithJson5, type Values} from '@augment-vir/common';
-import {type MockAwsSecrets} from '../public-mocks/mock-aws-secrets-manager.js';
-import {defineSecrets, rotatableSecretShape} from './define-secrets.js';
+import {defineSecrets, rotatableSecretShape} from 'updating-secrets';
+import {type MockAwsSecrets} from './mock-aws-secrets-manager.js';
 
 export const mockAwsSecretNames = {
     mockSecrets: 'mock/secrets',

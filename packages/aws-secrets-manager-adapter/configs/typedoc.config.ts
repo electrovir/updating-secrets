@@ -15,10 +15,7 @@ export const typeDocConfig: Partial<TypeDocOptions> = {
     intentionallyNotExported: [],
     defaultCategory: 'MISSING CATEGORY',
     categoryOrder: [
-        'Define Secrets',
-        'Adapters',
-        'UpdatingSecrets',
-        'Mocks',
+        'Main',
         'Internal',
     ],
 };

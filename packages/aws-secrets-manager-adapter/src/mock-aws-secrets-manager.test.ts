@@ -1,7 +1,7 @@
 import {assert} from '@augment-vir/assert';
 import {describe, it} from '@augment-vir/test';
 import {GetResourcePolicyCommand} from '@aws-sdk/client-secrets-manager';
-import {AwsSecretsManagerAdapter} from '../adapters/aws-secrets-manager.adapter.js';
+import {AwsSecretsManagerAdapter} from './aws-secrets-manager.adapter.js';
 import {MockAwsSecretsManagerClient} from './mock-aws-secrets-manager.js';
 
 describe(MockAwsSecretsManagerClient.name, () => {

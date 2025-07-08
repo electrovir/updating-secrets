@@ -6,7 +6,7 @@ import {
 } from '@augment-vir/common';
 import {type InfisicalSDK, type ListSecretsOptions, type Secret} from '@infisical/sdk';
 import {type RequireExactlyOne} from 'type-fest';
-import {MockAwsSecretsManagerClient} from './mock-aws-secrets-manager.js';
+import {MockAwsSecretsManagerClient} from '../../../aws-secrets-manager-adapter/src/mock-aws-secrets-manager.js';
 
 /**
  * Mock secrets setup for {@link MockAwsSecretsManagerClient}.

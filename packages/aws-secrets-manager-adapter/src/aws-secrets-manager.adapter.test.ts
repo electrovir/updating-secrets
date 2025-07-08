@@ -6,10 +6,10 @@ import {
     omitObjectKeys,
 } from '@augment-vir/common';
 import {describe, it} from '@augment-vir/test';
-import {MockAwsSecretsManagerClient} from '../public-mocks/mock-aws-secrets-manager.js';
-import {mockSecrets, mockSecretValues} from '../secrets-definition/define-secrets.mock.js';
-import {processSecrets} from '../updating-secrets.js';
+import {processSecrets} from 'updating-secrets';
 import {AwsSecretsManagerAdapter} from './aws-secrets-manager.adapter.js';
+import {MockAwsSecretsManagerClient} from './mock-aws-secrets-manager.js';
+import {mockSecrets, mockSecretValues} from './secrets.mock.js';
 
 describe(AwsSecretsManagerAdapter.name, () => {
     it('loads secrets', async () => {

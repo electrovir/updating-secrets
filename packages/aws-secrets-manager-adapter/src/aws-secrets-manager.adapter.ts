@@ -11,8 +11,7 @@ import {
     type GetSecretValueCommand,
     type GetSecretValueCommandOutput,
 } from '@aws-sdk/client-secrets-manager';
-import {type ProcessedSecretDefinitions} from '../secrets-definition/define-secrets.js';
-import {BaseSecretsAdapter} from './base.adapter.js';
+import {BaseSecretsAdapter, type ProcessedSecretDefinitions} from 'updating-secrets';
 
 /**
  * Minimal subset of AWS's `SecretsManagerClient` from the
