@@ -1,6 +1,7 @@
 import {SecretsManager} from '@aws-sdk/client-secrets-manager';
-import {AwsSecretsManagerAdapter, createUpdatingSecrets} from '../index.js';
-import {mySecrets} from './define-secrets.example.js';
+import {createUpdatingSecrets} from 'updating-secrets';
+import {mySecrets} from 'updating-secrets/src/examples/define-secrets.example.js';
+import {AwsSecretsManagerAdapter} from './aws-secrets-manager.adapter.js';
 
 const updatingSecrets = await createUpdatingSecrets(mySecrets, [
     new AwsSecretsManagerAdapter(

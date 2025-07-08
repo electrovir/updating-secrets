@@ -65,7 +65,8 @@ export const mySecrets = defineSecrets({
 
 Second, choose your secrets adapters:
 
--   [`AwsSecretsManagerAdapter`](https://electrovir.github.io/updating-secrets/classes/AwsSecretsManagerAdapter.html): loads secrets from AWS Secrets Manager.
+-   https://www.npmjs.com/package/@updating-secrets/infisical-adapter
+-   https://www.npmjs.com/package/@updating-secrets/aws-secrets-manager-adapter
 -   [`SecretsJsonFileAdapter`](https://electrovir.github.io/updating-secrets/classes/SecretsJsonFileAdapter.html): loads secrets from a JSON file.
 -   [`StaticSecretsAdapter`](https://electrovir.github.io/updating-secrets/classes/StaticSecretsAdapter.html): allows you to define all secrets values in-place.
 
@@ -90,11 +91,9 @@ export class MyCustomSecretsAdapter extends BaseSecretsAdapter {
 
 Lastly, create an instance of [`UpdatingSecrets`](https://electrovir.github.io/updating-secrets/classes/UpdatingSecrets.html) (with [`createUpdatingSecrets`](https://electrovir.github.io/updating-secrets/functions/createUpdatingSecrets.html)):
 
-<!-- example-link: src/examples/updating-secrets.example.ts -->
-
 ```TypeScript
 import {SecretsManager} from '@aws-sdk/client-secrets-manager';
-import {AwsSecretsManagerAdapter, createUpdatingSecrets} from 'updating-secrets';
+import {AwsSecretsManagerAdapter, createUpdatingSecrets} from '@updating-secrets/aws-secrets-manager-adapter';
 import {mySecrets} from './define-secrets.example.js';
 
 const updatingSecrets = await createUpdatingSecrets(mySecrets, [

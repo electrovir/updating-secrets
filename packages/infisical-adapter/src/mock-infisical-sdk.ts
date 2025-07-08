@@ -8,7 +8,7 @@ import {type InfisicalSDK, type ListSecretsOptions, type Secret} from '@infisica
 import {type RequireExactlyOne} from 'type-fest';
 
 /**
- * Mock secrets setup for {@link MockAwsSecretsManagerClient}.
+ * Mock secrets setup for {@link MockInfisicalSdk}.
  *
  * @category Internal
  */

@@ -10,6 +10,7 @@
     ],
     "scripts": {
         "compile": "virmator compile",
+        "docs": "virmator docs",
         "format": "virmator format",
         "lint": "virmator lint fix",
         "publish": "virmator publish npm run test:all",
