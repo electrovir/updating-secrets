@@ -87,6 +87,10 @@ export type SecretDefinitions = {
                  */
                 useWholeFolder: true;
             }>;
+            onePassword: {
+                /** A URL generated from 1Password's "copy private link" action. */
+                secretUrl: string;
+            };
             /**
              * Configuration for loading this secret from AWS. This is required if you're using the
              * AWS SecretsManager adapter, otherwise the secret will fail to load.
