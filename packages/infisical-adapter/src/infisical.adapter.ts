@@ -11,8 +11,11 @@ import {
     wrapInTry,
 } from '@augment-vir/common';
 import {type ListSecretsOptions, type Secret} from '@infisical/sdk';
-import {type ProcessedSecretDefinitions} from '../secrets-definition/define-secrets.js';
-import {BaseSecretsAdapter, type RawSecrets} from './base.adapter.js';
+import {
+    BaseSecretsAdapter,
+    type ProcessedSecretDefinitions,
+    type RawSecrets,
+} from 'updating-secrets';
 
 /**
  * Intermediate type for processing secrets from Infisical. Used in {@link InfisicalAdapter} and

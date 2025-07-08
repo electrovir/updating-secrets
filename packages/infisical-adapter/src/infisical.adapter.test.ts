@@ -3,15 +3,14 @@ import {mapObjectValues} from '@augment-vir/common';
 import {describe, it, itCases} from '@augment-vir/test';
 import {InfisicalSDK} from '@infisical/sdk';
 import {defineShape} from 'object-shape-tester';
-import {MockInfisicalSdk, type MockInfisicalSecrets} from '../public-mocks/mock-infisical-sdk.js';
-import {defineSecrets, type SecretDefinitions} from '../secrets-definition/define-secrets.js';
-import {processSecrets} from '../updating-secrets.js';
+import {defineSecrets, processSecrets, type SecretDefinitions} from 'updating-secrets';
 import {
     getNested,
     InfisicalAdapter,
     setNested,
     type NeededInfisicalSdk,
 } from './infisical.adapter.js';
+import {MockInfisicalSdk, type MockInfisicalSecrets} from './mock-infisical-sdk.js';
 
 describe('NeededInfisicalSdk', () => {
     it('is compatible with a real instance', () => {
