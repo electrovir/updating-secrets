@@ -1,6 +1,7 @@
 import {assert} from '@augment-vir/assert';
 import {
     ensureError,
+    ensureErrorAndPrependMessage,
     getOrSet,
     mapObjectValuesSync,
     parseWithJson5,
@@ -103,7 +104,12 @@ export class AwsSecretsManagerAdapter extends BaseSecretsAdapter {
                         return awsSecretValue;
                     }
                 })
-                .catch((reason: unknown) => ensureError(reason));
+                .catch((reason: unknown) =>
+                    ensureErrorAndPrependMessage(
+                        reason,
+                        `Failed to load AWS secret '${awsSecretName}'`,
+                    ),
+                );
         });
     }
 }
