@@ -73,7 +73,7 @@ export type NeededOnePasswordItem = SelectFrom<
     Item,
     {
         fields: {
-            id: true;
+            title: true;
             value: true;
         };
     }
@@ -106,7 +106,7 @@ function parseFields(item: Readonly<NeededOnePasswordItem>): Record<string, stri
         item.fields,
         (field) => {
             return {
-                key: field.id,
+                key: field.title,
                 value: field.value,
             };
         },
