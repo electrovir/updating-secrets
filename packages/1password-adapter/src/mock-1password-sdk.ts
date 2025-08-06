@@ -38,11 +38,11 @@ export class MockOnePasswordSdk implements NeededOnePasswordClient {
             const item: NeededOnePasswordItem = {
                 fields: Object.entries(mockValue).map(
                     ([
-                        id,
+                        title,
                         value,
                     ]) => {
                         return {
-                            id,
+                            title,
                             value,
                         };
                     },
