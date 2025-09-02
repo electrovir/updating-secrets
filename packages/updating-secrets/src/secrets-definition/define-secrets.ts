@@ -1,5 +1,5 @@
 import {type PartialWithUndefined, type Values} from '@augment-vir/common';
-import {defineShape, optional, type ShapeDefinition} from 'object-shape-tester';
+import {defineShape, optionalShape, type Shape} from 'object-shape-tester';
 import {type Exact, type RequireExactlyOne} from 'type-fest';
 
 /**
@@ -44,7 +44,7 @@ export const rotatableSecretShape = defineShape({
     /** The latest up-to-date version of the secret's value. */
     current: '',
     /** The optional legacy value for the secret. Use for graceful secret rotation. */
-    legacy: optional(''),
+    legacy: optionalShape(''),
 });
 
 /**
@@ -161,7 +161,7 @@ export type ProcessedSecretDefinitions = {
             description: string;
             whereToFind: string;
         };
-        shapeDefinition: ShapeDefinition<unknown, true> | undefined;
+        shapeDefinition: Shape | undefined;
         adapterConfig: NonNullable<Values<SecretDefinitions>['adapterConfig']>;
     };
 };
@@ -173,6 +173,6 @@ export type ProcessedSecretDefinitions = {
  */
 export type SecretValues<Secrets extends SecretDefinitions = SecretDefinitions> = {
     [SecretName in keyof Secrets]: 'shape' extends keyof Secrets[SecretName]
-        ? ShapeDefinition<Secrets[SecretName]['shape'], true>['runtimeType']
+        ? Shape<Secrets[SecretName]['shape']>['runtimeType']
         : string;
 };

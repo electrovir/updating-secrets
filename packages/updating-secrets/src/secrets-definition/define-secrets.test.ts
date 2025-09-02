@@ -36,19 +36,19 @@ describe(defineSecrets.name, () => {
         assert.tsType<MySecretsValues>().equals<
             Readonly<{
                 mySecret1: Readonly<{
-                    a: Readonly<{
+                    a: {
                         current: string;
                         legacy?: string;
-                    }>;
-                    b: Readonly<{
+                    };
+                    b: {
                         current: string;
                         legacy?: string;
-                    }>;
+                    };
                 }>;
-                mySecret2: Readonly<{
+                mySecret2: {
                     current: string;
                     legacy?: string;
-                }>;
+                };
                 mySecret3: string;
             }>
         >();

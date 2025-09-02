@@ -446,7 +446,7 @@ export function processSecrets<const Secrets extends SecretDefinitions>(
                 whereToFind: secretInit.whereToFind,
             },
             secretName,
-            shapeDefinition: secretInit.shape ? defineShape(secretInit.shape, true) : undefined,
+            shapeDefinition: secretInit.shape ? defineShape(secretInit.shape) : undefined,
         };
         return {
             key: secretName,
