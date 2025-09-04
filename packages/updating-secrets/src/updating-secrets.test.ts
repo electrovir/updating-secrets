@@ -106,7 +106,7 @@ describe(UpdatingSecrets.name, () => {
                 matchMessage: 'No value',
             });
             assert.throws(() => updatingSecrets.get.secretWrongShape, {
-                matchMessage: 'Shape mismatch at top level',
+                matchMessage: 'Expected object',
             });
         } finally {
             updatingSecrets.destroy();
