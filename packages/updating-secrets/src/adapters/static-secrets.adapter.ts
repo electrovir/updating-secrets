@@ -25,4 +25,9 @@ export class StaticSecretsAdapter extends BaseSecretsAdapter {
     public override loadSecrets() {
         return this.staticSecrets;
     }
+
+    /** Load an individual secret from the static secrets given. */
+    public override loadSingleSecret(secretKey: string) {
+        return this.staticSecrets[secretKey];
+    }
 }

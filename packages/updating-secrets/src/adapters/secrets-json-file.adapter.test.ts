@@ -38,6 +38,11 @@ describe(SecretsJsonFileAdapter.name, () => {
             some: 'content',
         });
     });
+    it('loads a single secret', async () => {
+        const instance = new SecretsJsonFileAdapter(mockJsonFilePath);
+
+        assert.strictEquals(await instance.loadSingleSecret('some'), 'content');
+    });
     it('can generate new secrets', async () => {
         const mockNewSecrets = {
             new: 'secrets',

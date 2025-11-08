@@ -7,6 +7,10 @@ describe(BaseSecretsAdapter.name, () => {
         const adapter = new BaseSecretsAdapter('mock');
         await assert.throws(async () => await adapter.loadSecrets({}));
     });
+    it('errors on base loadSingleSecret method', async () => {
+        const adapter = new BaseSecretsAdapter('mock');
+        await assert.throws(async () => await adapter.loadSingleSecret(''));
+    });
     it('allows base destroy method', () => {
         const adapter = new BaseSecretsAdapter('mock');
         adapter.destroy();

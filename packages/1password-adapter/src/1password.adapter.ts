@@ -48,19 +48,22 @@ export class OnePasswordAdapter extends BaseSecretsAdapter {
                     `No 1Password adapter config (required for using OnePasswordAdapter) defined for secret '${secretDefinition.secretName}'.`,
                 );
             }
-            const {itemId, vaultId} = extract1PasswordIds(onePasswordConfig.secretUrl);
 
-            return this.onePasswordClient.items
-                .get(vaultId, itemId)
-                .then((item) => {
-                    const fields = parseFields(item) satisfies Record<string, string>;
-
-                    return fields;
-                })
-                .catch((error: unknown) => {
-                    return ensureError(error);
-                });
+            return this.loadSingleSecret(onePasswordConfig.secretUrl).catch((error: unknown) =>
+                ensureError(error),
+            );
         });
+    }
+
+    /** Load an individual secret from the given URL. */
+    public override async loadSingleSecret(secretUrl: string) {
+        const {itemId, vaultId} = extract1PasswordIds(secretUrl);
+
+        const item = await this.onePasswordClient.items.get(vaultId, itemId);
+
+        const fields = parseFields(item) satisfies Record<string, string>;
+
+        return fields;
     }
 }
 

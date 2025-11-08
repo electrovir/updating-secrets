@@ -18,7 +18,7 @@ describe(AwsSecretsManagerAdapter.name, () => {
         );
 
         const loadedSecrets = await awaitAllPromisesInObject(
-            await adapter.loadSecrets(processSecrets(mockSecrets)),
+            adapter.loadSecrets(processSecrets(mockSecrets)),
         );
         const erroredSecretNames = filterMap(
             getObjectTypedEntries(loadedSecrets),

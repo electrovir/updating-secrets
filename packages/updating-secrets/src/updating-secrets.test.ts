@@ -1,6 +1,7 @@
 import {assert, waitUntil} from '@augment-vir/assert';
 import {wait, type MaybePromise} from '@augment-vir/common';
 import {describe, it} from '@augment-vir/test';
+import {defineShape} from 'object-shape-tester';
 import {BaseSecretsAdapter, type RawSecrets} from './adapters/base.adapter.js';
 import {StaticSecretsAdapter} from './adapters/static-secrets.adapter.js';
 import {
@@ -357,6 +358,219 @@ describe(UpdatingSecrets.name, () => {
             updatingSecrets.destroy();
         }
     });
+
+    it('loads a static secret dynamically', async () => {
+        const secrets = {
+            secret: {
+                current: '1',
+                legacy: '0',
+            },
+            secretWithoutLegacy: {
+                current: '2',
+            },
+        };
+        const adapter = new StaticSecretsAdapter(secrets);
+        const updatingSecrets = await createUpdatingSecrets(
+            defineSecrets({
+                secret: {
+                    description: '',
+                    whereToFind: '',
+                    shape: rotatableSecretShape,
+                },
+                secretWithoutLegacy: {
+                    description: '',
+                    whereToFind: '',
+                    shape: rotatableSecretShape,
+                },
+            }),
+            [adapter],
+        );
+        try {
+            assert.deepEquals(
+                await updatingSecrets.loadDynamicSecret(
+                    'secretWithoutLegacy',
+                    defineShape({
+                        current: '',
+                    }),
+                ),
+                {
+                    current: '2',
+                },
+            );
+            assert.deepEquals(
+                await updatingSecrets.loadDynamicSecret(
+                    'secretWithoutLegacy',
+                    defineShape({
+                        current: '',
+                    }),
+                ),
+                {
+                    current: '2',
+                },
+            );
+        } finally {
+            updatingSecrets.destroy();
+        }
+    });
+
+    it('fails to load a dynamic secret from cache with new shape', async () => {
+        const secrets = {
+            secret: {
+                current: '1',
+                legacy: '0',
+            },
+            secretWithoutLegacy: {
+                current: '2',
+            },
+        };
+        const adapter = new StaticSecretsAdapter(secrets);
+        const updatingSecrets = await createUpdatingSecrets(
+            defineSecrets({
+                secret: {
+                    description: '',
+                    whereToFind: '',
+                    shape: rotatableSecretShape,
+                },
+                secretWithoutLegacy: {
+                    description: '',
+                    whereToFind: '',
+                    shape: rotatableSecretShape,
+                },
+            }),
+            [adapter],
+        );
+        try {
+            assert.deepEquals(
+                await updatingSecrets.loadDynamicSecret(
+                    'secretWithoutLegacy',
+                    defineShape({
+                        current: '',
+                    }),
+                ),
+                {
+                    current: '2',
+                },
+            );
+            await assert.throws(() =>
+                updatingSecrets.loadDynamicSecret(
+                    'secretWithoutLegacy',
+                    defineShape({
+                        somethingWrong: '',
+                    }),
+                ),
+            );
+        } finally {
+            updatingSecrets.destroy();
+        }
+    });
+
+    it('fails to load a missing secret dynamically', async () => {
+        const secrets = {
+            secret: {
+                current: '1',
+                legacy: '0',
+            },
+            secretWithoutLegacy: {
+                current: '2',
+            },
+        };
+        const adapter = new StaticSecretsAdapter(secrets);
+        const updatingSecrets = await createUpdatingSecrets(
+            defineSecrets({
+                secret: {
+                    description: '',
+                    whereToFind: '',
+                    shape: rotatableSecretShape,
+                },
+                secretWithoutLegacy: {
+                    description: '',
+                    whereToFind: '',
+                    shape: rotatableSecretShape,
+                },
+            }),
+            [adapter],
+        );
+        try {
+            await assert.throws(
+                () =>
+                    updatingSecrets.loadDynamicSecret(
+                        'invalid value',
+                        defineShape({
+                            current: '',
+                        }),
+                    ),
+                {
+                    matchMessage: 'not found',
+                },
+            );
+        } finally {
+            updatingSecrets.destroy();
+        }
+    });
+
+    it('fails to load an empty secret dynamically', async () => {
+        const secrets = {
+            emptySecret: '',
+        };
+        const adapter = new StaticSecretsAdapter(secrets);
+        const updatingSecrets = await createUpdatingSecrets(
+            defineSecrets({
+                emptySecret: {
+                    description: '',
+                    whereToFind: '',
+                },
+            }),
+            [adapter],
+        );
+        try {
+            await assert.throws(
+                () =>
+                    updatingSecrets.loadDynamicSecret(
+                        'emptySecret',
+                        defineShape({
+                            current: '',
+                        }),
+                    ),
+                {
+                    matchMessage: 'Secret is empty',
+                },
+            );
+        } finally {
+            updatingSecrets.destroy();
+        }
+    });
+    it('fails to load a mismatched secret dynamically', async () => {
+        const secrets = {
+            mySecret: 'hi',
+        };
+        const adapter = new StaticSecretsAdapter(secrets);
+        const updatingSecrets = await createUpdatingSecrets(
+            defineSecrets({
+                mySecret: {
+                    description: '',
+                    whereToFind: '',
+                },
+            }),
+            [adapter],
+        );
+        try {
+            await assert.throws(
+                () =>
+                    updatingSecrets.loadDynamicSecret(
+                        'mySecret',
+                        defineShape({
+                            current: '',
+                        }),
+                    ),
+                {
+                    matchMessage: 'mismatch',
+                },
+            );
+        } finally {
+            updatingSecrets.destroy();
+        }
+    });
+
     it('compares a rotatable secret', async () => {
         const secrets = {
             secret: {

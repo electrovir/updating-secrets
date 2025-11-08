@@ -36,4 +36,10 @@ export class BaseSecretsAdapter {
      * any resources passed to it in its constructor.
      */
     public destroy() {}
+
+    /** Load an individual secret from the adapter. No shape checking is performed here. */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    public loadSingleSecret(secretId: string): MaybePromise<unknown> {
+        throw new Error('Do not try to load a secret from the base secrets adapter.');
+    }
 }

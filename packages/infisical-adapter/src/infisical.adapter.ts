@@ -80,27 +80,13 @@ export class InfisicalAdapter extends BaseSecretsAdapter {
             }
 
             const projectSecretsPromise = getOrSet(secretsCache, infisicalConfig.projectId, () => {
-                try {
-                    return (
-                        this.infisicalClient
-                            .secrets()
-                            .listSecrets({
-                                recursive: true,
-                                environment: this.infisicalEnvironment,
-                                projectId: infisicalConfig.projectId,
-                                viewSecretValue: true,
-                            })
-                            .then(({secrets}) => {
-                                return mapInfisicalSecrets(secrets);
-                            })
-                            /* node:coverage ignore next 3 */
-                            .catch((error: unknown) => {
-                                return ensureError(error);
-                            })
-                    );
-                } catch (error) {
-                    return Promise.reject(ensureError(error));
-                }
+                return (
+                    this.loadSingleSecret(infisicalConfig.projectId)
+                        /* node:coverage ignore next 3 */
+                        .catch((error: unknown) => {
+                            return ensureError(error);
+                        })
+                );
             });
 
             return projectSecretsPromise
@@ -155,6 +141,17 @@ export class InfisicalAdapter extends BaseSecretsAdapter {
                     return ensureError(error);
                 });
         });
+    }
+
+    /** Load an entire project's secrets via `projectId`. */
+    public override async loadSingleSecret(projectId: string) {
+        const rawSecrets = await this.infisicalClient.secrets().listSecrets({
+            recursive: true,
+            environment: this.infisicalEnvironment,
+            projectId,
+            viewSecretValue: true,
+        });
+        return mapInfisicalSecrets(rawSecrets.secrets);
     }
 }
 

@@ -3,6 +3,7 @@ import {
     combineErrors,
     DeferredPromise,
     ensureError,
+    ensureErrorAndPrependMessage,
     extractErrorMessage,
     getObjectTypedEntries,
     type JsonCompatibleValue,
@@ -15,8 +16,15 @@ import {
     type RequiredAndNotNull,
     type Values,
 } from '@augment-vir/common';
-import {type AnyDuration, convertDuration} from 'date-vir';
-import {assertValidShape, defineShape} from 'object-shape-tester';
+import {
+    type AnyDuration,
+    calculateRelativeDate,
+    convertDuration,
+    type FullDate,
+    getNowInUtcTimezone,
+    isDateAfter,
+} from 'date-vir';
+import {assertValidShape, checkValidShape, defineShape, type Shape} from 'object-shape-tester';
 import {type BaseSecretsAdapter} from './adapters/base.adapter.js';
 import {SecretLoadError} from './secret-load.error.js';
 import {
@@ -141,6 +149,12 @@ export class UpdatingSecrets<const Secrets extends Readonly<SecretDefinitions>> 
      */
     protected loadingSecretsPromise: Promise<SecretValues<Secrets>> | undefined;
     protected consecutiveFailureCount = 0;
+    protected dynamicCache: {
+        [SecretName in string]: {
+            value: any;
+            cachedAt: FullDate;
+        };
+    } = {};
 
     constructor(
         secrets: Readonly<Secrets>,
@@ -424,6 +438,65 @@ export class UpdatingSecrets<const Secrets extends Readonly<SecretDefinitions>> 
         }
 
         return this.currentSecrets;
+    }
+
+    /**
+     * Load a single secret dynamically, without a secret definition. The given `secretKey` varies
+     * based on the adapters in use.
+     */
+    public async loadDynamicSecret<const S extends Shape>(
+        secretKey: string,
+        shapeRequirement: S,
+    ): Promise<S['runtimeType']> {
+        const cached = this.dynamicCache[secretKey];
+        if (
+            cached &&
+            checkValidShape(cached.value, shapeRequirement) &&
+            !isDateAfter({
+                fullDate: getNowInUtcTimezone(),
+                relativeTo: calculateRelativeDate(cached.cachedAt, this.options.updateInterval),
+            })
+        ) {
+            return cached.value;
+        }
+
+        const newValue = await this.loadSecretFromAdapters(secretKey, shapeRequirement);
+
+        this.dynamicCache[secretKey] = {
+            value: newValue,
+            cachedAt: getNowInUtcTimezone(),
+        };
+
+        return newValue;
+    }
+
+    /** Try to load a single secret from any of the provided adapters. */
+    protected async loadSecretFromAdapters<const S extends Shape>(
+        secretKey: string,
+        shapeRequirement: S,
+    ): Promise<S['runtimeType']> {
+        const errors: Error[] = [new Error(`Secret '${secretKey}' not found in any adapters.`)];
+
+        for (const adapter of this.adapters) {
+            try {
+                const value = await adapter.loadSingleSecret(secretKey);
+                if (!value) {
+                    throw new Error('Secret is empty');
+                }
+                assertValidShape(value, shapeRequirement);
+
+                return value;
+            } catch (error) {
+                errors.push(
+                    ensureErrorAndPrependMessage(
+                        error,
+                        `Failed to load secret '${secretKey}' from adapter '${adapter.adapterName}'`,
+                    ),
+                );
+            }
+        }
+
+        throw combineErrors(errors);
     }
 }
 

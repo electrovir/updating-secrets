@@ -42,10 +42,7 @@ export class AwsSecretsManagerAdapter extends BaseSecretsAdapter {
     }
 
     /** Loads secrets from the provided `SecretsManagerClient`. */
-    public override async loadSecrets(secrets: ProcessedSecretDefinitions) {
-        /* node:coverage ignore next 1: dynamic imports are not branches */
-        const {GetSecretValueCommand} = await import('@aws-sdk/client-secrets-manager');
-
+    public override loadSecrets(secrets: ProcessedSecretDefinitions) {
         const cachedSecrets: {[AwsSecretName in string]: Promise<unknown>} = {};
 
         return mapObjectValuesSync(secrets, (secretName, secretDefinition) => {
@@ -63,26 +60,9 @@ export class AwsSecretsManagerAdapter extends BaseSecretsAdapter {
                 );
             }
             const secretValue = getOrSet(cachedSecrets, awsSecretName, () => {
-                const sendCommand = new GetSecretValueCommand({
-                    SecretId: awsSecretName,
-                });
-                return this.awsSecretsManager.send(sendCommand).then((result) => {
-                    try {
-                        const secretValue = result.SecretString;
-
-                        if (secretValue) {
-                            return wrapInTry(() => parseWithJson5(secretValue), {
-                                fallbackValue: secretValue,
-                            });
-                        } else {
-                            throw new Error(
-                                `AWS SecretsManager secret '${awsSecretName}' has no string value.`,
-                            );
-                        }
-                    } catch (error) {
-                        return ensureError(error);
-                    }
-                });
+                return this.loadSingleSecret(awsSecretName).catch((error: unknown) =>
+                    ensureError(error),
+                );
             });
 
             return secretValue
@@ -111,5 +91,26 @@ export class AwsSecretsManagerAdapter extends BaseSecretsAdapter {
                     ),
                 );
         });
+    }
+
+    /** Load an entire individual secret from AWS. */
+    public override async loadSingleSecret(secretId: string) {
+        /* node:coverage ignore next 1: dynamic imports are not branches */
+        const {GetSecretValueCommand} = await import('@aws-sdk/client-secrets-manager');
+
+        const sendCommand = new GetSecretValueCommand({
+            SecretId: secretId,
+        });
+        const result = await this.awsSecretsManager.send(sendCommand);
+
+        const secretValue = result.SecretString;
+
+        if (secretValue) {
+            return wrapInTry(() => parseWithJson5(secretValue), {
+                fallbackValue: secretValue,
+            });
+        } else {
+            throw new Error(`AWS SecretsManager secret '${secretId}' has no string value.`);
+        }
     }
 }

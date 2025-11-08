@@ -105,4 +105,13 @@ export class SecretsJsonFileAdapter<
 
         return parseWithJson5(fileContents);
     }
+
+    /** Load an individual secret from the JSON file. */
+    public override async loadSingleSecret(secretKey: string) {
+        const fileContents = parseWithJson5(
+            String(await this.options.fsOverride.promises.readFile(this.jsonFilePath)),
+        );
+
+        return fileContents[secretKey];
+    }
 }

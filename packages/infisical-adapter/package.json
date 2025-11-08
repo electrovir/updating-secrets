@@ -1,6 +1,6 @@
 {
     "name": "@updating-secrets/infisical-adapter",
-    "version": "1.0.4",
+    "version": "1.1.0",
     "description": "Infisical adapter for the updating-secrets package.",
     "keywords": [
         "secrets",
@@ -42,7 +42,7 @@
         "@augment-vir/common": "^31.48.0",
         "@infisical/sdk": "^4.0.6",
         "type-fest": "^5.2.0",
-        "updating-secrets": "^1.0.4"
+        "updating-secrets": "^1.1.0"
     },
     "devDependencies": {
         "@augment-vir/test": "^31.48.0",
