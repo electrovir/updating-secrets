@@ -1,6 +1,6 @@
 {
     "name": "@updating-secrets/aws-secrets-manager-adapter",
-    "version": "1.1.0",
+    "version": "1.1.1",
     "description": "AWS Secrets Manager adapter for the updating-secrets package.",
     "keywords": [
         "secrets",
@@ -43,7 +43,7 @@
         "@augment-vir/common": "^31.57.5",
         "@aws-sdk/client-secrets-manager": "^3.908.0",
         "type-fest": "^5.3.1",
-        "updating-secrets": "^1.1.0"
+        "updating-secrets": "^1.1.1"
     },
     "devDependencies": {
         "@augment-vir/test": "^31.57.5",

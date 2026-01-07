@@ -1,3 +1,4 @@
+import {check} from '@augment-vir/assert';
 import {
     mergeDefinedProperties,
     parseWithJson5,
@@ -11,7 +12,12 @@ import {
     writeFile as writeFileImport,
 } from 'node:fs/promises';
 import {dirname} from 'node:path';
-import {type SecretDefinitions, type SecretValues} from '../secrets-definition/define-secrets.js';
+import {checkValidShape} from 'object-shape-tester';
+import {
+    type ProcessedSecretDefinitions,
+    type SecretDefinitions,
+    type SecretValues,
+} from '../secrets-definition/define-secrets.js';
 import {BaseSecretsAdapter} from './base.adapter.js';
 
 /**
@@ -39,8 +45,10 @@ export type SecretsJsonFileAdapterOptions<Secrets extends SecretDefinitions = an
         existsSync: (filePath: string) => boolean;
     };
     /**
-     * Optional function that will automatically generate and save new secrets if the JSON file is
-     * missing. This is particularly useful for dev or testing environments.
+     * Optional function that will automatically generate and save secrets if the JSON file is
+     * missing or if any secrets are missing. Only missing secrets will be added from the generated
+     * values; existing secrets are preserved. This is particularly useful for dev or testing
+     * environments where new secrets may be added over time.
      */
     generateValues: (() => MaybePromise<SecretValues<Secrets>>) | undefined;
 };
@@ -83,8 +91,10 @@ export class SecretsJsonFileAdapter<
     }
 
     /** Loads secrets from the given JSON file path. */
-    public override async loadSecrets() {
-        if (!this.options.fsOverride.existsSync(this.jsonFilePath)) {
+    public override async loadSecrets(secrets: Readonly<ProcessedSecretDefinitions>) {
+        const fileExists = this.options.fsOverride.existsSync(this.jsonFilePath);
+
+        if (!fileExists) {
             if (this.options.generateValues) {
                 const newSecrets = await this.options.generateValues();
                 await this.options.fsOverride.promises.mkdir(dirname(this.jsonFilePath), {
@@ -94,6 +104,7 @@ export class SecretsJsonFileAdapter<
                     this.jsonFilePath,
                     JSON.stringify(newSecrets),
                 );
+                return newSecrets;
             } else {
                 throw new Error(`Missing secrets JSON file at '${this.jsonFilePath}'`);
             }
@@ -103,7 +114,35 @@ export class SecretsJsonFileAdapter<
             await this.options.fsOverride.promises.readFile(this.jsonFilePath),
         );
 
-        return parseWithJson5(fileContents);
+        const existingSecrets = parseWithJson5(fileContents);
+
+        if (this.options.generateValues) {
+            const invalidSecretKeys = Object.keys(secrets).filter((key) => {
+                if (!(key in existingSecrets)) {
+                    /** Secret is missing. */
+                    return true;
+                }
+                const secretValue = existingSecrets[key];
+                const shapeDefinition = secrets[key]?.shapeDefinition;
+                return shapeDefinition
+                    ? !checkValidShape(secretValue, shapeDefinition)
+                    : !check.isString(secretValue);
+            });
+
+            if (invalidSecretKeys.length > 0) {
+                const generatedSecrets = await this.options.generateValues();
+                invalidSecretKeys.forEach((invalidSecretKey) => {
+                    existingSecrets[invalidSecretKey] = generatedSecrets[invalidSecretKey];
+                });
+
+                await this.options.fsOverride.promises.writeFile(
+                    this.jsonFilePath,
+                    JSON.stringify(existingSecrets),
+                );
+            }
+        }
+
+        return existingSecrets;
     }
 
     /** Load an individual secret from the JSON file. */
