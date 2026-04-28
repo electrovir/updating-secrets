@@ -268,17 +268,16 @@ export class UpdatingSecrets<const Secrets extends Readonly<SecretDefinitions>> 
                                         secretName,
                                         loadedSecretValue,
                                     ): Promise<JsonCompatibleValue | SecretLoadError> => {
+                                        const shapeDefinition =
+                                            this.processedSecrets[secretName]?.shapeDefinition;
                                         try {
                                             const value = await loadedSecretValue;
                                             if (value instanceof Error) {
                                                 throw value;
-                                            } else if (
-                                                this.processedSecrets[secretName]?.shapeDefinition
-                                            ) {
+                                            } else if (shapeDefinition) {
                                                 assertValidShape(
                                                     value,
-                                                    this.processedSecrets[secretName]
-                                                        .shapeDefinition,
+                                                    shapeDefinition,
                                                     /** Allow extra keys for forwards compatibility. */
                                                     {
                                                         allowExtraKeys: true,
@@ -288,6 +287,12 @@ export class UpdatingSecrets<const Secrets extends Readonly<SecretDefinitions>> 
 
                                             return value;
                                         } catch (caught) {
+                                            if (
+                                                shapeDefinition &&
+                                                checkValidShape(undefined, shapeDefinition)
+                                            ) {
+                                                return undefined;
+                                            }
                                             const error = new SecretLoadError(ensureError(caught), {
                                                 adapterName: adapter.adapterName,
                                                 secretName,
@@ -494,6 +499,10 @@ export class UpdatingSecrets<const Secrets extends Readonly<SecretDefinitions>> 
                     ),
                 );
             }
+        }
+
+        if (checkValidShape(undefined, shapeRequirement)) {
+            return undefined as S['runtimeType'];
         }
 
         throw combineErrors(errors);

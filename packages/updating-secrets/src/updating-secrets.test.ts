@@ -1,7 +1,7 @@
 import {assert, waitUntil} from '@augment-vir/assert';
 import {wait, type MaybePromise} from '@augment-vir/common';
 import {describe, it} from '@augment-vir/test';
-import {defineShape} from 'object-shape-tester';
+import {defineShape, unionShape} from 'object-shape-tester';
 import {BaseSecretsAdapter, type RawSecrets} from './adapters/base.adapter.js';
 import {StaticSecretsAdapter} from './adapters/static-secrets.adapter.js';
 import {
@@ -139,6 +139,67 @@ describe(UpdatingSecrets.name, () => {
             assert.throws(() => updatingSecrets.get.secret, {
                 matchMessage: 'No value',
             });
+        } finally {
+            updatingSecrets.destroy();
+        }
+    });
+    it('returns undefined when a failing secret allows undefined', async () => {
+        const updatingSecrets = await createUpdatingSecrets(
+            defineSecrets({
+                optionalSecret: {
+                    description: '',
+                    whereToFind: '',
+                    shape: unionShape(undefined, ''),
+                },
+                requiredSecret: {
+                    description: '',
+                    whereToFind: '',
+                },
+            }),
+            [
+                new StaticSecretsAdapter({
+                    // @ts-expect-error: this is intentionally not a valid value.
+                    optionalSecret: new Error('boom'),
+                    requiredSecret: 'value',
+                }),
+            ],
+            {
+                updateInterval: {
+                    seconds: 0,
+                },
+            },
+        );
+        try {
+            assert.strictEquals(updatingSecrets.get.optionalSecret, undefined);
+            assert.strictEquals(updatingSecrets.get.requiredSecret, 'value');
+        } finally {
+            updatingSecrets.destroy();
+        }
+    });
+    it('returns undefined when an invalid-shape secret allows undefined', async () => {
+        const updatingSecrets = await createUpdatingSecrets(
+            defineSecrets({
+                optionalSecret: {
+                    description: '',
+                    whereToFind: '',
+                    shape: unionShape(undefined, {
+                        key: '',
+                    }),
+                },
+            }),
+            [
+                new StaticSecretsAdapter({
+                    optionalSecret: 'wrong shape',
+                }),
+            ],
+            {
+                updateInterval: {
+                    seconds: 0,
+                },
+            },
+        );
+        try {
+            assert.strictEquals(updatingSecrets.get.optionalSecret, undefined);
         } finally {
             updatingSecrets.destroy();
         }
@@ -537,6 +598,30 @@ describe(UpdatingSecrets.name, () => {
                     matchMessage: 'Secret is empty',
                 },
             );
+        } finally {
+            updatingSecrets.destroy();
+        }
+    });
+    it('returns undefined dynamically when no adapter has the secret and shape allows undefined', async () => {
+        const updatingSecrets = await createUpdatingSecrets(
+            defineSecrets({
+                placeholder: {
+                    description: '',
+                    whereToFind: '',
+                },
+            }),
+            [
+                new StaticSecretsAdapter({
+                    placeholder: 'value',
+                }),
+            ],
+        );
+        try {
+            const result = await updatingSecrets.loadDynamicSecret(
+                'missing',
+                unionShape(undefined, ''),
+            );
+            assert.strictEquals(result, undefined);
         } finally {
             updatingSecrets.destroy();
         }
