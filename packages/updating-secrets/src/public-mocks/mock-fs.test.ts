@@ -4,7 +4,9 @@ import {createMockFs} from './mock-fs.js';
 
 describe(createMockFs.name, () => {
     it('errors on missing file', async () => {
-        const fs = createMockFs({paths: {}});
+        const fs = createMockFs({
+            paths: {},
+        });
         await assert.throws(() => fs.promises.readFile('path'));
     });
 });

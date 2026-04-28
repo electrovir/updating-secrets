@@ -125,7 +125,9 @@ describe(InfisicalAdapter.name, () => {
                 ab: "{has:'json'}",
                 c: {
                     innerSecret: 'ffffffffffff',
-                    'nested-test-folder': {aaaaaaaa: 'bbbbbbb'},
+                    'nested-test-folder': {
+                        aaaaaaaa: 'bbbbbbb',
+                    },
                 },
                 d: {
                     one: 'a',
@@ -242,7 +244,9 @@ describe(getNested.name, () => {
         {
             it: 'throws an error child',
             inputs: [
-                {a: new Error('failed child')},
+                {
+                    a: new Error('failed child'),
+                },
                 ['a'],
             ],
             throws: {
@@ -253,7 +257,9 @@ describe(getNested.name, () => {
         {
             it: 'gets a top level value',
             inputs: [
-                {a: 'value'},
+                {
+                    a: 'value',
+                },
                 ['a'],
             ],
             expect: 'value',

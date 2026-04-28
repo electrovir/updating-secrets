@@ -152,7 +152,9 @@ describe(UpdatingSecrets.name, () => {
 
             public override async loadSecrets(secrets: Readonly<ProcessedSecretDefinitions>) {
                 loadCount++;
-                await wait({seconds: 1});
+                await wait({
+                    seconds: 1,
+                });
 
                 return {
                     secret: 'value',

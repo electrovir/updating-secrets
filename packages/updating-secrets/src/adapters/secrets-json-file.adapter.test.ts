@@ -12,7 +12,10 @@ function createMockSecretDefinitions(keys: string[]): ProcessedSecretDefinitions
     for (const key of keys) {
         definitions[key] = {
             secretName: key,
-            help: {description: '', whereToFind: ''},
+            help: {
+                description: '',
+                whereToFind: '',
+            },
             shapeDefinition: undefined,
             adapterConfig: {},
         };
@@ -22,10 +25,14 @@ function createMockSecretDefinitions(keys: string[]): ProcessedSecretDefinitions
 
 describe(SecretsJsonFileAdapter.name, () => {
     it('reads a normal JSON file', async () => {
-        const mockContents = {fake: 'contents'};
+        const mockContents = {
+            fake: 'contents',
+        };
 
         const instance = new SecretsJsonFileAdapter('my path', {
-            fsOverride: createMockFs({contents: JSON.stringify(mockContents)}),
+            fsOverride: createMockFs({
+                contents: JSON.stringify(mockContents),
+            }),
         });
 
         assert.deepEquals(
@@ -34,10 +41,16 @@ describe(SecretsJsonFileAdapter.name, () => {
         );
     });
     it('reads a JSON5 file', async () => {
-        const mockContents = {fake: 'contents'};
+        const mockContents = {
+            fake: 'contents',
+        };
 
         const instance = new SecretsJsonFileAdapter('my path', {
-            fsOverride: createMockFs({paths: {['my path']: stringifyWithJson5(mockContents)}}),
+            fsOverride: createMockFs({
+                paths: {
+                    ['my path']: stringifyWithJson5(mockContents),
+                },
+            }),
         });
 
         assert.deepEquals(
@@ -47,7 +60,9 @@ describe(SecretsJsonFileAdapter.name, () => {
     });
     it('errors on a missing file', async () => {
         const instance = new SecretsJsonFileAdapter('my path', {
-            fsOverride: createMockFs({paths: {}}),
+            fsOverride: createMockFs({
+                paths: {},
+            }),
         });
 
         await assert.throws(() => instance.loadSecrets(createMockSecretDefinitions(['fake'])));
@@ -105,7 +120,9 @@ describe(SecretsJsonFileAdapter.name, () => {
         const instance = new SecretsJsonFileAdapter('my path', {
             fsOverride: createMockFs(
                 {
-                    paths: {['my path']: JSON.stringify(existingSecrets)},
+                    paths: {
+                        ['my path']: JSON.stringify(existingSecrets),
+                    },
                 },
                 (filePath, contents) => {
                     assert.isString(contents);
@@ -143,7 +160,9 @@ describe(SecretsJsonFileAdapter.name, () => {
 
         const instance = new SecretsJsonFileAdapter('my path', {
             fsOverride: createMockFs({
-                paths: {['my path']: JSON.stringify(existingSecrets)},
+                paths: {
+                    ['my path']: JSON.stringify(existingSecrets),
+                },
             }),
             generateValues() {
                 generateValuesCalled = true;
@@ -158,28 +177,42 @@ describe(SecretsJsonFileAdapter.name, () => {
     });
     it('regenerates invalid secrets based on shapeDefinition', async () => {
         const existingSecrets = {
-            validKey: {name: 'correct'},
+            validKey: {
+                name: 'correct',
+            },
             invalidKey: 'wrong-type',
         };
         const generatedSecrets = {
-            validKey: {name: 'should-not-overwrite'},
-            invalidKey: {name: 'regenerated'},
+            validKey: {
+                name: 'should-not-overwrite',
+            },
+            invalidKey: {
+                name: 'regenerated',
+            },
         };
         let writtenContents: string = '';
         let generateValuesCalled = false;
 
-        const validShape = defineShape({name: ''});
+        const validShape = defineShape({
+            name: '',
+        });
 
         const secretDefinitions: ProcessedSecretDefinitions = {
             validKey: {
                 secretName: 'validKey',
-                help: {description: '', whereToFind: ''},
+                help: {
+                    description: '',
+                    whereToFind: '',
+                },
                 shapeDefinition: validShape,
                 adapterConfig: {},
             },
             invalidKey: {
                 secretName: 'invalidKey',
-                help: {description: '', whereToFind: ''},
+                help: {
+                    description: '',
+                    whereToFind: '',
+                },
                 shapeDefinition: validShape,
                 adapterConfig: {},
             },
@@ -188,7 +221,9 @@ describe(SecretsJsonFileAdapter.name, () => {
         const instance = new SecretsJsonFileAdapter('my path', {
             fsOverride: createMockFs(
                 {
-                    paths: {['my path']: JSON.stringify(existingSecrets)},
+                    paths: {
+                        ['my path']: JSON.stringify(existingSecrets),
+                    },
                 },
                 (filePath, contents) => {
                     assert.isString(contents);
@@ -205,12 +240,20 @@ describe(SecretsJsonFileAdapter.name, () => {
 
         assert.isTrue(generateValuesCalled);
         assert.deepEquals(result, {
-            validKey: {name: 'correct'},
-            invalidKey: {name: 'regenerated'},
+            validKey: {
+                name: 'correct',
+            },
+            invalidKey: {
+                name: 'regenerated',
+            },
         });
         assert.deepEquals(JSON.parse(writtenContents), {
-            validKey: {name: 'correct'},
-            invalidKey: {name: 'regenerated'},
+            validKey: {
+                name: 'correct',
+            },
+            invalidKey: {
+                name: 'regenerated',
+            },
         });
     });
 });

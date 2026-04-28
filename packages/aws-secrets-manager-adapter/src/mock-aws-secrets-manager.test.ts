@@ -12,7 +12,11 @@ describe(MockAwsSecretsManagerClient.name, () => {
     it('does not support non-GetSecretValueCommand commands', async () => {
         const client = new MockAwsSecretsManagerClient({});
         await assert.throws(() =>
-            client.send(new GetResourcePolicyCommand({SecretId: 'something'})),
+            client.send(
+                new GetResourcePolicyCommand({
+                    SecretId: 'something',
+                }),
+            ),
         );
     });
 });

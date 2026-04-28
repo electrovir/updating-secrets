@@ -165,7 +165,10 @@ function mapInfisicalSecrets(secrets: NeededInfisicalSecret[]): MappedInfisicalS
             setNested(
                 secretsMap,
                 removeSuffix({
-                    value: removePrefix({value: secret.secretPath, prefix: '/'}),
+                    value: removePrefix({
+                        value: secret.secretPath,
+                        prefix: '/',
+                    }),
                     suffix: '/',
                 })
                     .split('/')
@@ -204,7 +207,9 @@ export function getNested(
     if (keys.length > 1) {
         if (check.isString(nextParent)) {
             throw new TypeError(
-                `Keys still remain but received string value: ${stringify({keys})}`,
+                `Keys still remain but received string value: ${stringify({
+                    keys,
+                })}`,
             );
         }
         return getNested(nextParent, keys.slice(1));
@@ -223,9 +228,7 @@ export function setNested(parent: MappedInfisicalSecrets, keys: string[], value:
 
     if (nextKey == undefined) {
         throw new Error('Invalid key or ran out of keys.');
-    }
-
-    if (keys.length === 1) {
+    } else if (keys.length === 1) {
         parent[nextKey] = value;
         return;
     }

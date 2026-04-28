@@ -25,7 +25,9 @@ export class SecretLoadError extends Error {
     ) {
         const message = `Failed to load secret '${secretName}' from adapter '${adapterName}': ${extractErrorMessage(originalError)}`;
 
-        super(message, {cause: originalError});
+        super(message, {
+            cause: originalError,
+        });
         this.allErrors.push(originalError);
     }
 }

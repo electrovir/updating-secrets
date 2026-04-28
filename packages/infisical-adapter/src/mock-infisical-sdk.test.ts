@@ -42,7 +42,12 @@ describe(MockInfisicalSdk.name, () => {
                 clientSecret: '',
             });
 
-        const secrets = (await sdk.secrets().listSecrets({environment: '', projectId: ''})).secrets;
+        const secrets = (
+            await sdk.secrets().listSecrets({
+                environment: '',
+                projectId: '',
+            })
+        ).secrets;
 
         assert.deepEquals(secrets as Partial<ArrayElement<typeof secrets>>[], [
             {

@@ -1,4 +1,3 @@
-/* eslint-disable sonarjs/no-hardcoded-passwords */
 import {type Client} from '@1password/sdk';
 import {assert} from '@augment-vir/assert';
 import {mapObjectValues} from '@augment-vir/common';
