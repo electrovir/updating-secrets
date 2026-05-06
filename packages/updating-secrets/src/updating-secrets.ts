@@ -275,21 +275,18 @@ export class UpdatingSecrets<const Secrets extends Readonly<SecretDefinitions>> 
                                             if (value instanceof Error) {
                                                 throw value;
                                             } else if (shapeDefinition) {
-                                                assertValidShape(
-                                                    value,
-                                                    shapeDefinition,
-                                                    /** Allow extra keys for forwards compatibility. */
-                                                    {
-                                                        allowExtraKeys: true,
-                                                    },
-                                                );
+                                                assertValidShape(value, shapeDefinition, {
+                                                    allowExtraKeys: true,
+                                                });
                                             }
 
                                             return value;
                                         } catch (caught) {
                                             if (
                                                 shapeDefinition &&
-                                                checkValidShape(undefined, shapeDefinition)
+                                                checkValidShape(undefined, shapeDefinition, {
+                                                    allowExtraKeys: true,
+                                                })
                                             ) {
                                                 return undefined;
                                             }
@@ -456,7 +453,9 @@ export class UpdatingSecrets<const Secrets extends Readonly<SecretDefinitions>> 
         const cached = this.dynamicCache[secretKey];
         if (
             cached &&
-            checkValidShape(cached.value, shapeRequirement) &&
+            checkValidShape(cached.value, shapeRequirement, {
+                allowExtraKeys: true,
+            }) &&
             !isDateAfter({
                 fullDate: getNowInUtcTimezone(),
                 relativeTo: calculateRelativeDate(cached.cachedAt, this.options.updateInterval),
@@ -488,7 +487,9 @@ export class UpdatingSecrets<const Secrets extends Readonly<SecretDefinitions>> 
                 if (!value) {
                     throw new Error('Secret is empty');
                 }
-                assertValidShape(value, shapeRequirement);
+                assertValidShape(value, shapeRequirement, {
+                    allowExtraKeys: true,
+                });
 
                 return value;
             } catch (error) {
@@ -501,7 +502,11 @@ export class UpdatingSecrets<const Secrets extends Readonly<SecretDefinitions>> 
             }
         }
 
-        if (checkValidShape(undefined, shapeRequirement)) {
+        if (
+            checkValidShape(undefined, shapeRequirement, {
+                allowExtraKeys: true,
+            })
+        ) {
             return undefined as S['runtimeType'];
         }
 

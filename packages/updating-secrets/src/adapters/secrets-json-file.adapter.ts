@@ -125,7 +125,9 @@ export class SecretsJsonFileAdapter<
                 const secretValue = existingSecrets[key];
                 const shapeDefinition = secrets[key]?.shapeDefinition;
                 return shapeDefinition
-                    ? !checkValidShape(secretValue, shapeDefinition)
+                    ? !checkValidShape(secretValue, shapeDefinition, {
+                          allowExtraKeys: true,
+                      })
                     : !check.isString(secretValue);
             });
 
