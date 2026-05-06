@@ -172,7 +172,7 @@ export const mockSecretValues: MockAwsSecrets = {
         },
     },
     [mockAwsSecretNames.invalidJson]: {
-        rawString: `objectSecretInInvalidJson: some value`,
+        rawString: 'objectSecretInInvalidJson: some value',
     },
     [mockAwsSecretNames.mockJson5Secrets]: {
         rawString: stringifyWithJson5({

@@ -1,6 +1,6 @@
 {
     "name": "@updating-secrets/1password-adapter",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "1password adapter for the updating-secrets package.",
     "keywords": [
         "secrets",
@@ -39,14 +39,14 @@
     },
     "dependencies": {
         "@1password/sdk": "^0.4.0",
-        "@augment-vir/assert": "^31.68.4",
-        "@augment-vir/common": "^31.68.4",
+        "@augment-vir/assert": "^31.69.0",
+        "@augment-vir/common": "^31.69.0",
         "type-fest": "^5.6.0",
-        "updating-secrets": "^1.2.0",
-        "url-vir": "^2.1.8"
+        "updating-secrets": "^1.2.1",
+        "url-vir": "^2.1.9"
     },
     "devDependencies": {
-        "@augment-vir/test": "^31.68.4",
+        "@augment-vir/test": "^31.69.0",
         "@types/node": "^25.6.0",
         "c8": "^11.0.0",
         "istanbul-smart-text-reporter": "^1.1.5",

@@ -117,7 +117,7 @@ export class InfisicalAdapter extends BaseSecretsAdapter {
 
                     if (infisicalConfig.keyInFolder) {
                         if (check.isString(folderValue)) {
-                            throw new TypeError(`Cannot get keyInFolder of a non-folder.`);
+                            throw new TypeError('Cannot get keyInFolder of a non-folder.');
                         } else if (check.hasKey(folderValue, infisicalConfig.keyInFolder)) {
                             const value = folderValue[infisicalConfig.keyInFolder];
 
