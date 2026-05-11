@@ -1,6 +1,6 @@
 {
     "name": "@updating-secrets/aws-secrets-manager-adapter",
-    "version": "1.2.1",
+    "version": "1.3.0",
     "description": "AWS Secrets Manager adapter for the updating-secrets package.",
     "keywords": [
         "secrets",
@@ -39,15 +39,15 @@
         "test:update": "npm test update"
     },
     "dependencies": {
-        "@augment-vir/assert": "^31.69.0",
-        "@augment-vir/common": "^31.69.0",
-        "@aws-sdk/client-secrets-manager": "^3.1041.0",
+        "@augment-vir/assert": "^31.70.0",
+        "@augment-vir/common": "^31.70.0",
+        "@aws-sdk/client-secrets-manager": "^3.1045.0",
         "type-fest": "^5.6.0",
-        "updating-secrets": "^1.2.1"
+        "updating-secrets": "^1.3.0"
     },
     "devDependencies": {
-        "@augment-vir/test": "^31.69.0",
-        "@types/node": "^25.6.0",
+        "@augment-vir/test": "^31.70.0",
+        "@types/node": "^25.6.2",
         "c8": "^11.0.0",
         "istanbul-smart-text-reporter": "^1.1.5"
     },
