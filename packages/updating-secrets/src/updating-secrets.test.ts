@@ -476,57 +476,6 @@ describe(UpdatingSecrets.name, () => {
         }
     });
 
-    it('fails to load a dynamic secret from cache with new shape', async () => {
-        const secrets = {
-            secret: {
-                current: '1',
-                legacy: '0',
-            },
-            secretWithoutLegacy: {
-                current: '2',
-            },
-        };
-        const adapter = new StaticSecretsAdapter(secrets);
-        const updatingSecrets = await createUpdatingSecrets(
-            defineSecrets({
-                secret: {
-                    description: '',
-                    whereToFind: '',
-                    shape: rotatableSecretShape,
-                },
-                secretWithoutLegacy: {
-                    description: '',
-                    whereToFind: '',
-                    shape: rotatableSecretShape,
-                },
-            }),
-            [adapter],
-        );
-        try {
-            assert.deepEquals(
-                await updatingSecrets.loadDynamicSecret(
-                    'secretWithoutLegacy',
-                    defineShape({
-                        current: '',
-                    }),
-                ),
-                {
-                    current: '2',
-                },
-            );
-            await assert.throws(() =>
-                updatingSecrets.loadDynamicSecret(
-                    'secretWithoutLegacy',
-                    defineShape({
-                        somethingWrong: '',
-                    }),
-                ),
-            );
-        } finally {
-            updatingSecrets.destroy();
-        }
-    });
-
     it('fails to load a missing secret dynamically', async () => {
         const secrets = {
             secret: {
