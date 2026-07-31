@@ -231,15 +231,15 @@ export function setNested(parent: MappedInfisicalSecrets, keys: string[], value:
     } else if (keys.length === 1) {
         parent[nextKey] = value;
         return;
+    } else {
+        const nextParent = getOrSet(parent, nextKey, () => {
+            return {};
+        });
+
+        if (check.isString(nextParent) || check.isError(nextParent)) {
+            throw new TypeError(`Cannot set key '${nextKey}'; it's already set to a non-object.`);
+        }
+
+        return setNested(nextParent, keys.slice(1), value);
     }
-
-    const nextParent = getOrSet(parent, nextKey, () => {
-        return {};
-    });
-
-    if (check.isString(nextParent) || check.isError(nextParent)) {
-        throw new TypeError(`Cannot set key '${nextKey}'; it's already set to a non-object.`);
-    }
-
-    return setNested(nextParent, keys.slice(1), value);
 }

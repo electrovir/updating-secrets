@@ -1,7 +1,7 @@
 import {assert} from '@augment-vir/assert';
 import {mapObjectValues} from '@augment-vir/common';
 import {describe, it, itCases} from '@augment-vir/test';
-import {InfisicalSDK} from '@infisical/sdk';
+import {type InfisicalSDK} from '@infisical/sdk';
 import {defineShape} from 'object-shape-tester';
 import {defineSecrets, processSecrets, type SecretDefinitions} from 'updating-secrets';
 import {
@@ -14,7 +14,7 @@ import {MockInfisicalSdk, type MockInfisicalSecrets} from './mock-infisical-sdk.
 
 describe('NeededInfisicalSdk', () => {
     it('is compatible with a real instance', () => {
-        const sdk: NeededInfisicalSdk = new InfisicalSDK();
+        assert.tsType<InfisicalSDK>().matches<NeededInfisicalSdk>();
     });
 });
 

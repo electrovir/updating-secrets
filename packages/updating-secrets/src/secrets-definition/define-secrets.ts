@@ -1,6 +1,10 @@
-import {type PartialWithUndefined, type Values} from '@augment-vir/common';
+import {
+    type Exact,
+    type PartialWithUndefined,
+    type RequireExactlyOne,
+    type Values,
+} from '@augment-vir/common';
 import {defineShape, optionalShape, type Shape} from 'object-shape-tester';
-import {type Exact, type RequireExactlyOne} from 'type-fest';
 
 /**
  * The shape definition for built-in handling of secret rotation. Use this shape in a secret

@@ -12,7 +12,7 @@ import {MockOnePasswordSdk, type MockOnePasswordSecrets} from './mock-1password-
 
 describe('NeededOnePasswordClient', () => {
     it('is compatible with a real instance', () => {
-        const sdk: NeededOnePasswordClient = {} as any as Client;
+        assert.tsType<Client>().matches<NeededOnePasswordClient>();
     });
 });
 

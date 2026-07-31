@@ -1,10 +1,9 @@
 import {assert} from '@augment-vir/assert';
-import {type JsonCompatibleValue} from '@augment-vir/common';
+import {type JsonCompatibleValue, type RequireExactlyOne} from '@augment-vir/common';
 import {
     GetSecretValueCommand,
     type GetSecretValueCommandOutput,
 } from '@aws-sdk/client-secrets-manager';
-import {type RequireExactlyOne} from 'type-fest';
 
 /**
  * Mock secrets setup for {@link MockAwsSecretsManagerClient}.
@@ -37,7 +36,7 @@ export type MockAwsSecrets = {
  * @category Mocks
  */
 export class MockAwsSecretsManagerClient {
-    constructor(private readonly mockSecrets: MockAwsSecrets) {}
+    constructor(protected readonly mockSecrets: MockAwsSecrets) {}
 
     /**
      * A mock implementation of `SecretsManagerClient.send()`. Only the first parameter (the

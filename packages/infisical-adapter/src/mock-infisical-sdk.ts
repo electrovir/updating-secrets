@@ -3,9 +3,9 @@ import {
     stringifyWithJson5,
     type AnyObject,
     type JsonCompatibleValue,
+    type RequireExactlyOne,
 } from '@augment-vir/common';
 import {type InfisicalSDK, type ListSecretsOptions, type Secret} from '@infisical/sdk';
-import {type RequireExactlyOne} from 'type-fest';
 
 /**
  * Mock secrets setup for {@link MockInfisicalSdk}.

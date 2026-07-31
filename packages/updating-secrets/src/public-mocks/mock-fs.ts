@@ -1,5 +1,4 @@
-import {type MaybePromise} from '@augment-vir/common';
-import {type RequireExactlyOne} from 'type-fest';
+import {type MaybePromise, type RequireExactlyOne} from '@augment-vir/common';
 import {type SecretsJsonFileAdapterOptions} from '../adapters/secrets-json-file.adapter.js';
 
 /**

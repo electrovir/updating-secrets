@@ -27,6 +27,7 @@ export class MockOnePasswordSdk implements NeededOnePasswordClient {
     /** Mocks 1Password's `Client.items` API. */
     public readonly items = {
         /** Mocks 1Password's `Client.items.get` method. */
+        // eslint-disable-next-line @virmator/prefer-params-object
         get: async (vaultId: string, itemId: string): Promise<Item> => {
             const mockValue = this.mockSecrets[vaultId]?.[itemId];
 

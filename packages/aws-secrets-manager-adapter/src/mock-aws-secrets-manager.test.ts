@@ -6,8 +6,9 @@ import {MockAwsSecretsManagerClient} from './mock-aws-secrets-manager.js';
 
 describe(MockAwsSecretsManagerClient.name, () => {
     it('is compatible with the AWS Secrets Manager adapter', () => {
-        // eslint-disable-next-line sonarjs/constructor-for-side-effects
-        new AwsSecretsManagerAdapter(new MockAwsSecretsManagerClient({}));
+        assert.doesNotThrow(
+            () => new AwsSecretsManagerAdapter(new MockAwsSecretsManagerClient({})),
+        );
     });
     it('does not support non-GetSecretValueCommand commands', async () => {
         const client = new MockAwsSecretsManagerClient({});

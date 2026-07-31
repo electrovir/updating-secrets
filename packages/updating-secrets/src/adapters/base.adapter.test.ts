@@ -13,7 +13,7 @@ describe(BaseSecretsAdapter.name, () => {
     });
     it('allows base destroy method', () => {
         const adapter = new BaseSecretsAdapter('mock');
-        adapter.destroy();
+        assert.doesNotThrow(() => adapter.destroy());
     });
     it('blocks empty names', () => {
         assert.throws(() => new BaseSecretsAdapter(''));
